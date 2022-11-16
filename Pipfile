@@ -5,6 +5,11 @@ name = "pypi"
 
 [packages]
 pandas = "==1.2.0"
+numpy = "*"
+matplotlib = "*"
+tensorflow = "*"
+sklearn = "*"
+scikit-learn = "*"
 
 [dev-packages]
 
