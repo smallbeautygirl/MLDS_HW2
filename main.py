@@ -28,3 +28,4 @@ if __name__ == "__main__":
     data = [["2018-09-01 00:00:00", "buy", 2.5, 3],
             ["2018-09-01 01:00:00", "sell", 3, 5]]
     output(args.output, data)
+    print('測試push')
