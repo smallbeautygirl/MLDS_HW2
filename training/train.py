@@ -36,14 +36,23 @@ df.to_csv(os.path.join(training_data_dir, 'cleaned_data.csv'))
 data_train = df.loc[:'2018-08-31 23:00:00':]['consumption']
 data_train = np.array(data_train)
 
+data_train2 = df.loc[:'2018-08-31 23:00:00':]['generation']
+data_train2 = np.array(data_train)
+
 x_train, y_train = [], []
+x_train2, y_train2 = [], []
 
 # 24 hours
 for i in range(24, len(data_train) - 24):
     x_train.append(data_train[i - 24: i])
     y_train.append(data_train[i: i + 24])
+    
+for i in range(24, len(data_train2) - 24):
+    x_train2.append(data_train2[i - 24: i])
+    y_train2.append(data_train2[i: i + 24])
 
 x_train, y_train = np.array(x_train), np.array(y_train)
+x_train2, y_train2 = np.array(x_train2), np.array(y_train2)
 print(x_train.shape, y_train.shape)
 
 # Normalize dataset between 0 and 1 with MinMaxScaler
@@ -61,4 +70,14 @@ reg.compile(loss='mse', optimizer='adam')
 
 reg.fit(x_train, y_train, epochs=1)
 
-reg.save('model.h5')
+reg.save('consumption_model.h5')
+
+reg2 = Sequential()
+reg2.add(LSTM(units=200, activation='relu', input_shape=(24, 1)))
+reg2.add(Dense(1))
+
+reg2.compile(loss='mse', optimizer='adam')
+
+reg2.fit(x_train2, y_train2, epochs=1)
+
+reg2.save('generation_model.h5')
