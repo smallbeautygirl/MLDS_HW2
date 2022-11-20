@@ -4,6 +4,7 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 import random
+from datetime import datetime, timedelta
 #################################################################################################################################
 # You should not modify this part.
 
@@ -36,10 +37,9 @@ def output(path, data):
 #################################################################################################################################
 
 
-def evaluate_model(y_true_c, y_predicted_c, y_true_g, y_predicted_g):
+def evaluate_model(last_data, y_true_c, y_predicted_c, y_true_g, y_predicted_g):
     scores = []
-    print(y_true_c.shape[1])
-    print(y_true_c.shape[0])
+
     output_data = []
     action = None
     # calculate scores for each day
@@ -48,16 +48,19 @@ def evaluate_model(y_true_c, y_predicted_c, y_true_g, y_predicted_g):
         mse_g = mean_squared_error(y_true_g[:, i], y_predicted_g[:, i])
         rmse_c = np.sqrt(mse_c)
         rmse_g = np.sqrt(mse_g)
-        scores.append(rmse_c)
+        # scores.append(rmse_c)
         action
         if rmse_g > rmse_c:
             action = "sell"
+            price = random.uniform(1.15, 2.7)
         else:
             action = "buy"
+            price = random.uniform(
+                1.15, 2.7)
         hour = f'0{i}' if len(str(i)) == i else f'{i}'
+
         output_data.append([
-            f"2018-09-01 {hour}:00:00", action, random.uniform(
-                1.15, 2.7), abs(rmse_g-rmse_c)
+            f"{last_data+timedelta(days=1)} {hour}:00:00", action, price, abs(rmse_g-rmse_c)
         ])
 
     return output_data
@@ -77,10 +80,8 @@ if __name__ == "__main__":
 
     df = pd.read_csv('./training/cleaned_data.csv', parse_dates=True)
     df = df.set_index(['time'])
-    print(df.head())
-    print(df['consumption'])
+
     data_train = df['consumption']
-    print(data_train)
     data_train = np.array(data_train)
 
     data_train2 = df['generation']
@@ -100,8 +101,6 @@ if __name__ == "__main__":
 
     x_train, y_train = np.array(x_train), np.array(y_train)
     x_train2, y_train2 = np.array(x_train2), np.array(y_train2)
-    print(x_train.shape, y_train.shape)
-    print(x_train2.shape, y_train2.shape)
 
     # Normalize dataset between 0 and 1 with MinMaxScaler
     x_scaler = MinMaxScaler()
@@ -110,19 +109,16 @@ if __name__ == "__main__":
     y_scaler = MinMaxScaler()
     y_train = y_scaler.fit_transform(y_train)
 
-    print(x_train.shape[0])
     x_train = x_train.reshape(x_train.shape[0], 24, 1)
-    print(x_train.shape)
-    print(123)
+
     ###
-    x_scaler = MinMaxScaler()
-    x_train2 = x_scaler.fit_transform(x_train2)
+    x_scaler2 = MinMaxScaler()
+    x_train2 = x_scaler2.fit_transform(x_train2)
 
-    y_scaler = MinMaxScaler()
-    y_train = y_scaler.fit_transform(y_train)
+    y_scaler2 = MinMaxScaler()
+    y_train2 = y_scaler2.fit_transform(y_train2)
 
-    x_train2 = x_train.reshape(x_train2.shape[0], 24, 1)
-    print(x_train2.shape)
+    x_train2 = x_train2.reshape(x_train2.shape[0], 24, 1)
 
 # reg = Sequential()
 # reg.add(LSTM(units=200, activation='relu', input_shape=(24, 1)))
@@ -138,9 +134,21 @@ if __name__ == "__main__":
         args.consumption, parse_dates=True)
     consumption_data = consumption_data.set_index(['time'])
     consumption_data = consumption_data['consumption']
-    print('consumption_data')
-    print(consumption_data)
+
     consumption_data = np.array(consumption_data)
+
+    generation_data = pd.read_csv(
+        args.generation, parse_dates=True)
+
+    print(generation_data.iloc[-1].tolist())
+    last_data = generation_data.iloc[-1].tolist()[0]
+    print(last_data.split(' ')[0])
+    last_data = datetime.strptime(last_data.split(' ')[0], "%Y-%m-%d")
+    print(last_data)
+    generation_data = generation_data.set_index(['time'])
+    generation_data = generation_data['generation']
+
+    generation_data = np.array(generation_data)
 
     x_test_c, y_test_c = [], []
 
@@ -158,14 +166,14 @@ if __name__ == "__main__":
 
     x_test_g, y_test_g = [], []
     # Split test data by day (24 hours)
-    for i in range(24, len(consumption_data)-24):
-        x_test_g.append(consumption_data[i-24:i])
-        y_test_g.append(consumption_data[i:i+24])
+    for i in range(24, len(generation_data)-24):
+        x_test_g.append(generation_data[i-24:i])
+        y_test_g.append(generation_data[i:i+24])
 
     x_test_g, y_test_g = np.array(x_test_g), np.array(y_test_g)
 
-    x_test_g = x_scaler.transform(x_test_g)
-    y_test_g = y_scaler.transform(y_test_g)
+    x_test_g = x_scaler2.transform(x_test_g)
+    y_test_g = y_scaler2.transform(y_test_g)
 
     x_test_g = x_test_g.reshape(x_test_g.shape[0], 24, 1)
 
@@ -174,36 +182,17 @@ if __name__ == "__main__":
     # Show the model architecture
     # print(consumption_model.summary())
     y_pred_c = consumption_model.predict(x_test_c)
-    print('y_pred_c')
-    print(y_pred_c)
-    print(len(y_pred_c))
-
     y_pred_g = consumption_model.predict(x_test_g)
-    print('y_pred_g')
-    print(y_pred_g)
-    print(len(y_pred_g))
 
     y_pred_c = y_scaler.inverse_transform(y_pred_c)
-    print('y_pred_c')
-    print(y_pred_c)
-
     y_pred_g = y_scaler.inverse_transform(y_pred_g)
-    print('y_pred_g')
-    print(y_pred_g)
 
     y_true_c = y_scaler.inverse_transform(y_test_c)
-    print('y_true')
-    print(y_true_c)
-    print(len(y_true_c))
-
     y_true_g = y_scaler.inverse_transform(y_pred_g)
-    print('y_true_g')
-    print(y_true_g)
-    print(len(y_true_g))
 
-    result = evaluate_model(y_true_c, y_pred_c, y_true_g, y_pred_g)
+    result = evaluate_model(last_data, y_true_c, y_pred_c, y_true_g, y_pred_g)
     print(result)
-
+    output(args.output, result)
     # result = evaluate_model(y_true_g, y_pred_g)
     # print(result)
 
@@ -212,16 +201,3 @@ if __name__ == "__main__":
 
     # print(np.std(y_true_g[0]))
     # print(len(result[1]))
-# reg2 = Sequential()
-# reg2.add(LSTM(units=200, activation='relu', input_shape=(24, 1)))
-# reg2.add(Dense(1))
-
-# reg2.compile(loss='mse', optimizer='adam')
-
-# reg2.fit(x_train2, y_train2, epochs=1)
-
-# reg2.save('generation_model.h5')
-
-    data = [["2018-09-01 00:00:00", "buy", 2.5, 3],
-            ["2018-09-01 01:00:00", "sell", 3, 5]]
-    output(args.output, result)

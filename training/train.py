@@ -69,19 +69,16 @@ x_train = x_scaler.fit_transform(x_train)
 y_scaler = MinMaxScaler()
 y_train = y_scaler.fit_transform(y_train)
 
-print(x_train.shape[0])
 x_train = x_train.reshape(x_train.shape[0], 24, 1)
-print(x_train.shape)
-print(123)
+
 ###
-x_scaler = MinMaxScaler()
-x_train2 = x_scaler.fit_transform(x_train2)
+x_scaler2 = MinMaxScaler()
+x_train2 = x_scaler2.fit_transform(x_train2)
 
-y_scaler = MinMaxScaler()
-y_train = y_scaler.fit_transform(y_train)
+y_scaler2 = MinMaxScaler()
+y_train2 = y_scaler2.fit_transform(y_train2)
 
-x_train2 = x_train.reshape(x_train2.shape[0], 24, 1)
-print(x_train2.shape)
+x_train2 = x_train2.reshape(x_train2.shape[0], 24, 1)
 
 reg = Sequential()
 reg.add(LSTM(units=200, activation='relu', input_shape=(24, 1)))
