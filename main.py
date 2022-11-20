@@ -60,7 +60,8 @@ def evaluate_model(last_data, y_true_c, y_predicted_c, y_true_g, y_predicted_g):
         hour = f'0{i}' if len(str(i)) == i else f'{i}'
 
         output_data.append([
-            f"{last_data+timedelta(days=1)} {hour}:00:00", action, price, abs(rmse_g-rmse_c)
+            f"{last_data+timedelta(days=1)+timedelta(hours=i)}", action, price, abs(
+                rmse_g-rmse_c)
         ])
 
     return output_data
