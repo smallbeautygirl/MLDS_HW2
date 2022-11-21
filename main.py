@@ -184,13 +184,13 @@ if __name__ == "__main__":
     # Show the model architecture
     # print(consumption_model.summary())
     y_pred_c = consumption_model.predict(x_test_c)
-    y_pred_g = consumption_model.predict(x_test_g)
+    y_pred_g = generation_model.predict(x_test_g)
 
     y_pred_c = y_scaler.inverse_transform(y_pred_c)
-    y_pred_g = y_scaler.inverse_transform(y_pred_g)
+    y_pred_g = y_scaler2.inverse_transform(y_pred_g)
 
     y_true_c = y_scaler.inverse_transform(y_test_c)
-    y_true_g = y_scaler.inverse_transform(y_pred_g)
+    y_true_g = y_scaler2.inverse_transform(y_pred_g)
 
     result = evaluate_model(last_data, y_true_c, y_pred_c, y_true_g, y_pred_g)
     print(result)
