@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 pandas = "==1.2.0"
-numpy = "*"
-tensorflow = "*"
+numpy = "==1.23.4"
+tensorflow = "==2.10.0"
 sklearn = "*"
 
 [dev-packages]

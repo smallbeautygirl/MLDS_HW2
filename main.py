@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+import sklearn
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 import random
