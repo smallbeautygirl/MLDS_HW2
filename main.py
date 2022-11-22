@@ -161,7 +161,9 @@ def test_consumption(consumption_data, x_scaler, y_scaler):
 
     x_test_c = x_test_c.reshape(x_test_c.shape[0], 24, 1)
 
-    consumption_model = tf.keras.models.load_model('consumption_model_ep_60.h5')
+    consumption_model = tf.keras.models.load_model(
+        'consumption_model_ep_60.h5')
+    print(consumption_model.summary())
     y_pred_c = consumption_model.predict(x_test_c)
     y_pred_c = y_scaler.inverse_transform(y_pred_c)
     y_true_c = y_scaler.inverse_transform(y_test_c)
@@ -228,7 +230,7 @@ if __name__ == "__main__":
         generation_data, x_scaler_g, y_scaler_g)
 
     result = evaluate_model(last_data, y_true_c, y_pred_c, y_true_g, y_pred_g)
-    output(args.output,result)
+    output(args.output, result)
     # result = evaluate_model(y_true_g, y_pred_g)
     # print(result)
 

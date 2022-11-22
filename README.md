@@ -1,9 +1,48 @@
 # MLDS-HW2-2022
 
+### Description
+
 ### Source
 
-  - [Slide](https://docs.google.com/presentation/d/1ihPO_2WvHyrAHinLvGPXRs8jX8ED3Hri/edit?usp=sharing&ouid=112246576290315533201&rtpof=true&sd=true)
-  - [Dashboard](https://docs.google.com/spreadsheets/d/1Rx6OV64Br8EHrZpbjMa86rm9a8vsngNSjB12s4pO940/edit?usp=sharing)
+- [Slide](https://docs.google.com/presentation/d/1ihPO_2WvHyrAHinLvGPXRs8jX8ED3Hri/edit?usp=sharing&ouid=112246576290315533201&rtpof=true&sd=true)
+- [Dashboard](https://docs.google.com/spreadsheets/d/1Rx6OV64Br8EHrZpbjMa86rm9a8vsngNSjB12s4pO940/edit?usp=sharing)
+
+### :one: Idea
+
+#### :two: Training
+
+- :question: 訓練資料前處理
+
+  - 讀取 training_data 裡面 1~8 月的 csv 檔案
+
+  - 用 glob 的 function 把這八個月的 csv 整合為一個 csv
+
+  - 利用 pandas 來讀取剛剛整合完的 training data csv，**並把 "time" 設為 index**
+
+- :question: 使用什麼模型或方法
+
+  - model  :point_right:  **The Sequential model**
+
+  - layers :point_down: 
+
+     - LSTM
+
+     - Dense (輸出設為 24)
+
+   - model summary:
+      ```txt=
+         Model: "sequential"
+         _________________________________________________________________
+         Layer (type)                Output Shape              Param #   
+         =================================================================
+         lstm (LSTM)                 (None, 200)               161600    
+                                                                        
+         dense (Dense)               (None, 24)                4824      
+                                                                        
+         =================================================================
+      ```
+     - 
+#### :three: Validation
 
 ### Rules
 
@@ -20,15 +59,14 @@
    ┃     ┣━ bill-{mid}.csv
    ┃     ┗━ bidresult-{mid}.csv
    ┗━ training_data/
-      ┗━ target{household}.csv  
-      
+      ┗━ target{household}.csv
+
 ```
 
 1. `mid` 為每次媒合編號
 2. `household` 為住戶編號，共 50 組
 3. 請使用發給組長的帳號密碼，將檔案上傳至 `upload/`
 4. 相關媒合及投標資訊皆在 `download/` 下可以找到，可自行下載使用
-
 
 - File
 
