@@ -53,11 +53,11 @@ def evaluate_model(last_data, y_true_c, y_predicted_c, y_true_g, y_predicted_g):
 
         if rmse_g > rmse_c or (i >= 10 and i <= 15):
             action = "sell"
-            price = random.uniform(0.7, 2.5)
+            price = random.uniform(0.7, 2.4)
         else:
             action = "buy"
             price = random.uniform(
-                1.15, 2.7)
+                1.1, 2.4)
 
         output_data.append([
             f"{last_data+timedelta(days=1)+timedelta(hours=i)}", action, price, abs(
